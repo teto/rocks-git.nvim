@@ -44,6 +44,7 @@ local parser = require("rocks-git.parser")
 local git = require("rocks-git.git")
 local config = require("rocks-git.config")
 local nio = require("nio")
+local log = require("rocks.log")
 
 ---@class PackageSpec: RockSpec
 ---@field name string Name of the plugin.
@@ -73,9 +74,10 @@ local nio = require("nio")
 ---@param spec PackageSpec
 ---@return rocks-git.Package
 local function mk_package(spec)
+    local dir = vim.fs.joinpath(config.path, (spec.opt and "opt" or "start"), spec.name),
     return vim.tbl_deep_extend("keep", {
         url = parser.parse_git_url(spec.git),
-        dir = vim.fs.joinpath(config.path, (spec.opt and "opt" or "start"), spec.name),
+        dir = dir
     }, spec)
 end
 
@@ -270,5 +272,7 @@ rocks_git.get_prune_callback = nio.create(function(user_rocks)
         end
     end
 end, 1)
+
+log.info("rocks-git setup")
 
 return rocks_git

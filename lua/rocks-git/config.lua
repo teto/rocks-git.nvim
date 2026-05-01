@@ -23,6 +23,7 @@
 ---@field url_format string Git URL format (Lua format string)
 
 local rocks = require("rocks.api")
+local log = require("rocks.log")
 
 ---@type RocksGitConfig
 local default_config = {
@@ -38,6 +39,7 @@ local config = vim.tbl_deep_extend("force", default_config, user_configuration["
 for _, dir in pairs({ "start", "opt" }) do
     local package_dir = vim.fs.joinpath(config.path, dir)
     if not vim.uv.fs_stat(package_dir) then
+        log.debug("package_dir".. package_dir)
         -- XXX: rocks.fs is an internal module
         require("rocks.fs").mkdir_p(package_dir)
     end
