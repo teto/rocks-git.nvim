@@ -237,11 +237,13 @@ function git.get_head_branch(pkg)
     local remotes_dir = vim.fs.joinpath(git_dir, "refs", "remotes")
     return vim.iter(vim.fs.dir(remotes_dir))
         :map(function(remote_subdir)
-            return read_line(vim.fs.joinpath(remotes_dir, remote_subdir, "HEAD"))
+            local head_file_content = read_line(vim.fs.joinpath(remotes_dir, remote_subdir, "HEAD"))
+            if not head_file_content then
+                return
+            end
+            return head_file_content:match("^ref: refs/remotes/[^/]+/(.+)$") or head_file_content
         end)
-        :find(function(head_file_content)
-            return head_file_content:gsub("ref: refs/remotes/.+/", "")
-        end)
+        :next()
 end
 
 ---@param url string
