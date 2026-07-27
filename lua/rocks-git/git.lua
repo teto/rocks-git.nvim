@@ -259,8 +259,10 @@ end
 function git.get_latest_remote_semver_tag(url)
     local future = nio.control.future()
     get_latest_remote_version_tag(url, function(sc)
+        log.warn("Usign url " .. url)
         ---@cast sc vim.SystemCompleted
         if sc.code == 0 then
+            -- print("stdout", sc.stdout)
             if sc.stdout == "" then
                 log.debug("No tag found for " .. url)
                 future.set({})
